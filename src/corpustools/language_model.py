@@ -1,6 +1,6 @@
 from collections import deque
-from tst import TernarySearchTree
-from corpustools import extract_fields, ContainsEverything
+from .tst import TernarySearchTree
+from .corpustools import extract_fields, ContainsEverything
 
 
 class LanguageModel():

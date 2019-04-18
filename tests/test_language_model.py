@@ -1,10 +1,13 @@
+from os.path import dirname, join
 from itertools import chain
 from collections import Counter
 
 from corpustools import extract_fields, ngrams
-from language_model import LanguageModel
+from corpustools.language_model import LanguageModel
 
-DUMMY_CORPUS = "dummy_corpus.txt"
+top = join(dirname(__file__), "data")
+
+DUMMY_CORPUS = join(top, "dummy_corpus.txt")
 DUMMY_SPECS = {"tag_field": 2,
                "delimiter": "\t",
                "num_fields": 3}

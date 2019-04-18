@@ -1,6 +1,7 @@
 import gzip
 import tempfile
 
+from os.path import dirname, join
 from collections import Counter
 
 from corpustools import ENGLISH
@@ -10,11 +11,14 @@ from corpustools import merge_tokens_tags_corpus, replace_disallowed
 from corpustools import extract_units, extract_fields, split_collection
 from corpustools import filter_tagged_vocabulary, filter_tagged_event_file
 
-DUMMY_CORPUS = "dummy_corpus.txt"
-DUMMY_MERGED = "dummy_corpus_merged.txt"
-DUMMY_EVENTS = "dummy_corpus_merged_events.gz"
-DUMMY_EVENTS_FILTERED = "dummy_corpus_merged_events_filtered.gz"
-DUMMY_EVENTS_FILLED = "dummy_corpus_merged_events_filtered_fill_cues.gz"
+
+top = join(dirname(__file__), "data")
+
+DUMMY_CORPUS = join(top, "dummy_corpus.txt")
+DUMMY_MERGED = join(top, "dummy_corpus_merged.txt")
+DUMMY_EVENTS = join(top, "dummy_corpus_merged_events.gz")
+DUMMY_EVENTS_FILTERED = join(top, "dummy_corpus_merged_events_filtered.gz")
+DUMMY_EVENTS_FILLED = join(top, "dummy_corpus_merged_events_filtered_fill_cues.gz")
 
 DUMMY_SPECS = {"tag_field": 2,
                "delimiter": "\t",
@@ -73,7 +77,9 @@ def test_split_documents_into_sentences():
 def test_merge_tokens_tags_corpus():
     with tempfile.NamedTemporaryFile() as tmp:
         merge_tokens_tags_corpus(DUMMY_CORPUS, tmp.name,
-                                 symbols=ENGLISH, overwrite=True,
+                                 symbols=ENGLISH,
+                                 overwrite=True,
+                                 replacement="repl",
                                  **DUMMY_SPECS)
         with open(tmp.name) as test, open(DUMMY_MERGED) as standard:
             for line in test:
