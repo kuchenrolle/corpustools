@@ -1,0 +1,56 @@
+<corpus>
+<doc>
+<s>
+This	this	nn
+is	be	vb
+a	a	dt
+test	test	nn
+corpus	corpus	nn
+to	to	cc
+test	test	vb
+the	the	dt
+functions	function	nn
+of	of	pp
+the	the	dt
+code	code	nn
+files	file	nn
+.	.	zz
+</s>
+<s>
+It	it	nn
+consists	consist	vb
+of	of	pp
+three	three	ord
+sentences	sentence	nn
+in	in	pp
+two	two	ord
+documents	document	nn
+to	to	cc
+have	have	vb
+a	a	dt
+minimal	minimal	adj
+example	example	nn
+!	!	zz
+</s>
+</doc>
+<doc>
+<s>
+This	this	dt
+sentence	sentence	nn
+contains	contain	vb
+a	a	dt
+symbol	symbol	nn
+:	:	zz
+ℂ	ℂ	sy
+and	and	cc
+a	a	dt
+word	word	nn
+with	with	pp
+a	a	dt
+hyphen	hyphen	nn
+:	:	zz
+test-word	test-word	nn
+.	.	zz
+</s>
+</doc>
+</corpus>

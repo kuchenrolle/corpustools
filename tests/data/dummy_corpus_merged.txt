@@ -1,0 +1,3 @@
+this|nn is|vb a|dt test|nn corpus|nn to|cc test|vb the|dt functions|nn of|pp the|dt code|nn files|nn
+it|nn consists|vb of|pp three|ord sentences|nn in|pp two|ord documents|nn to|cc have|vb a|dt minimal|adj example|nn
+this|dt sentence|nn contains|vb a|dt symbol|nn and|cc a|dt word|nn with|pp a|dt hyphen|nn repl|nn
