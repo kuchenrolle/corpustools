@@ -76,10 +76,13 @@ def extract_fields(corpus,
 
         fields = line.split(delimiter)
 
-        if len(fields) == 1 and drop_meta and line.startswith("<"):
+        # heuristic: single field starting with < is a meta tag
+        if len(fields) == 1 and line.startswith("<"):
+            if not drop_meta:
+                yield line
             continue
 
-        if len(fields) < num_fields:
+        if len(fields) != num_fields:
             msg = f"Line ({idx}) with fewer elements than {num_fields} \
                     ({len(fields)} encountered:\n{line_}"
             warnings.warn(msg)
@@ -89,7 +92,7 @@ def extract_fields(corpus,
             if fields[tag_field] in drop_tags:
                 continue
 
-        if type(return_fields) == int:
+        if isinstance(return_fields, int):
             yield fields[return_fields]
         else:
             yield [fields[idx] for idx in return_fields]

@@ -34,6 +34,37 @@ def test_extract_tokens():
         assert len(tokens) == 38
 
 
+def test_drop_meta_false():
+    with open(DUMMY_CORPUS) as corpus:
+        tokens = extract_fields(corpus,
+                                drop_meta=False,
+                                **DUMMY_SPECS)
+        tokens = list(tokens)
+        assert len(tokens) == 50
+
+
+def test_keep_everything():
+    with open(DUMMY_CORPUS) as corpus:
+        tokens = extract_fields(corpus,
+                                drop_meta=False,
+                                drop_tags=False,
+                                **DUMMY_SPECS)
+        tokens = list(tokens)
+    assert len(tokens) == 56
+
+
+def test_extract_multiple_fields_and_meta():
+    with open(DUMMY_CORPUS) as corpus:
+        tokens = extract_fields(corpus,
+                                return_fields=[0, 2],
+                                drop_meta=False,
+                                drop_tags=False,
+                                **DUMMY_SPECS)
+        tokens = list(tokens)
+    assert len(tokens) == 56
+    assert sum([isinstance(token, str) for token in tokens]) == 12
+
+
 def test_extract_tags_tokens():
     with open(DUMMY_CORPUS) as corpus:
         tags_tokens = extract_fields(corpus,
