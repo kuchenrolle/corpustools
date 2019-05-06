@@ -251,6 +251,9 @@ class LanguageModel():
     def __contains__(self, n_gram):
         return n_gram in self._counts
 
+    def __iter__(self):
+        return self.completions()
+
     @property
     def n(self):
         return self._n
@@ -288,3 +291,4 @@ def train_lm(corpus, n,
                        must_contain=must_contain)
     lm.train(corpus)
     return lm
+

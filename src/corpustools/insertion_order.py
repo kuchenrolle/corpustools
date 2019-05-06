@@ -56,7 +56,8 @@ def recursive_median(array):
 
 
 def median_split_vocabulary(frequencies):
-    """Returns optimal insertion order for balanced Ternary Search Tree.
+    """Returns vocabulary in optimal insertion order
+    for balanced Ternary Search Tree.
 
     Parameters
     ----------
@@ -84,3 +85,4 @@ def median_split_vocabulary(frequencies):
     indices = recursive_median(frequencies)
     for idx in indices:
         yield strings[idx]
+

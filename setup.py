@@ -4,8 +4,10 @@ from os import system
 from os.path import basename
 from os.path import splitext
 
+from setuptools import Command
+from setuptools import Extension
 from setuptools import find_packages
-from setuptools import setup, Command
+from setuptools import setup
 
 
 # taken from http://stackoverflow.com/a/3780822
@@ -23,6 +25,9 @@ class CleanCommand(Command):
         system('rm -vrf ./build ./dist ./*.pyc ./*.tgz ./src/*.egg-info')
 
 
+tst = Extension("corpustools.tst",
+                sources = ["src/corpustools/tst.pyx"])
+
 setup(
     name='corpustools',
     version='0.1.0',
@@ -34,6 +39,7 @@ setup(
     url='https://github.com/kuchenrolle/corpustools',
     packages=find_packages('src'),
     package_dir={'': 'src'},
+    ext_modules=[tst],
     py_modules=[splitext(basename(path))[0] for path in glob('src/*.py')],
     include_package_data=True,
     zip_safe=False,
@@ -65,10 +71,10 @@ setup(
         'Topic :: Utilities',
     ],
     keywords=[
-        'corpus', 'text mining', 'ternary search tree'
+        'corpus', 'text mining', 'ternary search tree', 'ngrams'
     ],
     install_requires=[
-        'spacy', 'pandas', 'psutil', 'pyndl'
+        'spacy', 'pandas', 'psutil', 'pyndl', "cython"
     ],
     extras_require={
         # eg:
