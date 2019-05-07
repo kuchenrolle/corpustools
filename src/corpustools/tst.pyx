@@ -172,13 +172,13 @@ cdef class TernarySearchTree():
         if node.count:
             yield node.character, node.count
 
-        if node.eq:
-            for completion, frequency in self._completions(node.eq):
-                yield node.character + completion, frequency
-
         if node.lo:
             for completion, frequency in self._completions(node.lo):
                 yield completion, frequency
+
+        if node.eq:
+            for completion, frequency in self._completions(node.eq):
+                yield node.character + completion, frequency
 
         if node.hi:
             for completion, frequency in self._completions(node.hi):
