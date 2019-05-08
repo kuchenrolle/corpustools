@@ -73,6 +73,24 @@ def test_must_contain():
             assert lm.frequency(n_gram) == dummy_counts[n_gram_string]
 
 
+def test_must_contain_completions():
+    lm = LanguageModel(3, must_contain={"this", "test"})
+    lm.train(tokens)
+
+    for completion, freq in lm.completions():
+        completion = completion.split("#")
+        assert any([word in {"this", "test"} for word in completion])
+
+
+def test_must_contain_iter():
+    lm = LanguageModel(3, must_contain={"this", "test"})
+    lm.train(tokens)
+
+    for completion, freq in lm:
+        completion = completion.split("#")
+        assert any([word in {"this", "test"} for word in completion])
+
+
 def test_vocabulary_provided():
     pass
 

@@ -218,7 +218,15 @@ class LanguageModel():
         Tuple
             Each complete n-gram with frequency as a (str, int)-tuple
         """
-        return self._counts.completions(prefix)
+        if not self.must_contain:
+            return self._counts.completions(prefix)
+
+        for completion, frequency in self._counts.completions(prefix):
+            completion_ = completion.split("#")
+            if not any([word in self.must_contain for word in completion_]):
+                continue
+
+            yield completion, frequency
 
     def _train(self, n_gram):
         # test for OOV words
