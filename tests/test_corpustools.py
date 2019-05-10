@@ -175,6 +175,16 @@ def test_add_most_frequent_filter_targets():
     assert added == expected
 
 
+def test_add_most_frequent_most_frequent_in_targets():
+    targets = {"banana", "orange", "dragonfruit", "pear"}
+    vocab = Counter({"apple": 10, "banana": 20, "dragonfruit": 30,
+                     "mango": 40, "kiwi": 50, "pear": 60})
+    added = add_most_frequent(targets, vocab, 6, filter_targets=False)
+    expected = {"banana", "orange", "dragonfruit", "pear",
+                "mango", "kiwi"}
+    assert added == expected
+
+
 def test_contains_everything():
     container = ContainsEverything()
     assert "test" in container

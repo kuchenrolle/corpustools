@@ -126,20 +126,12 @@ def extract_units(corpus,
     """
     if "keep_meta" not in kwargs:
         kwargs["keep_meta"] = {boundary}
+    else:
+        kwargs["keep_meta"] = set(kwargs["keep_meta"])
+        kwargs["keep_meta"].add(boundary)
 
     corpus = extract_fields(corpus, **kwargs)
-    current_unit = list()
-
-    for token in corpus:
-        if token == boundary:
-            yield current_unit
-            current_unit = list()
-            continue
-
-        current_unit.append(token)
-
-    if current_unit:
-        return current_unit
+    return split_collection(corpus, boundary)
 
 
 def replace_disallowed(sequence, symbols, replacement):
@@ -189,7 +181,7 @@ def split_collection(collection, split):
 
     Yields
     ------
-    list
+    sublist : list
         Each subcollection after splitting
 
     Notes
@@ -278,22 +270,24 @@ def filter_tagged_vocabulary(tagged_vocabulary, vocabulary, split="|"):
         string delimiting tags and tokens in tagged_vocabulary
     """
     targets = set()
+
     for tagged_word in tagged_vocabulary:
         word, tag = tagged_word.split(split)
         if word in vocabulary:
             targets.add(tagged_word)
+
     return targets
 
 
-def add_most_frequent(targets, vocab, target_size, filter_targets=False):
+def add_most_frequent(targets, vocabulary, target_size, filter_targets=False):
     """Creates vocabulary of target_size from targets and most frequent
-    words in vocab.
+    words in vocabulary.
 
     Parameters
     ----------
-    targets : collection
+    targets : container
         List of targets to be included
-    vocab : Counter
+    vocabulary : Counter
         Vocabulary to add most frequent words from
     target_size : int
         Size of vocabulary to be returned
@@ -301,16 +295,20 @@ def add_most_frequent(targets, vocab, target_size, filter_targets=False):
         If true, targets that are not included in vocab are removed.
     """
     if filter_targets:
-        targets = {target for target in targets if target in vocab}
+        targets = {target for target in targets if target in vocabulary}
+    # copy, so mutable input container is not modified
+    else:
+        targets = {target for target in targets}
 
-    if len(targets) >= target_size:
+    number = target_size - len(set(targets))
+    if number < 0:
         msg = "Size of targets larger than target_size!\n"
-        warnings.warn(msg)
-        return targets
+        raise ValueError(msg)
 
-    num = target_size - len(set(targets))
-    vocab = [k for k, v in vocab.most_common(num) if k not in targets]
-    targets.update(vocab)
+    vocabulary = [key for key, frequency in vocabulary.most_common()
+                  if key not in targets]
+
+    targets.update(vocabulary[:number])
     return targets
 
 
