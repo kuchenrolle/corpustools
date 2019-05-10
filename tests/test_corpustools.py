@@ -4,12 +4,15 @@ import tempfile
 from os.path import dirname, join
 from collections import Counter
 
-from corpustools import ENGLISH
 from corpustools import add_most_frequent
 from corpustools import ContainsEverything
-from corpustools import merge_tokens_tags_corpus, replace_disallowed
-from corpustools import extract_units, extract_fields, split_collection
+from corpustools import ENGLISH
+from corpustools import extract_units, extract_fields
 from corpustools import filter_tagged_vocabulary, filter_tagged_event_file
+from corpustools import merge_tokens_tags_corpus
+from corpustools import ngrams
+from corpustools import replace_disallowed
+from corpustools import split_collection
 
 
 top = join(dirname(__file__), "data")
@@ -17,8 +20,10 @@ top = join(dirname(__file__), "data")
 DUMMY_CORPUS = join(top, "dummy_corpus.txt")
 DUMMY_MERGED = join(top, "dummy_corpus_merged.txt")
 DUMMY_EVENTS = join(top, "dummy_corpus_merged_events.gz")
-DUMMY_EVENTS_FILTERED = join(top, "dummy_corpus_merged_events_filtered.gz")
-DUMMY_EVENTS_FILLED = join(top, "dummy_corpus_merged_events_filtered_fill_cues.gz")
+DUMMY_EVENTS_FILTERED = join(top, "dummy_corpus_merged_events_"
+                                  "filtered.gz")
+DUMMY_EVENTS_FILLED = join(top, "dummy_corpus_merged_events_"
+                                "filtered_fill_cues.gz")
 
 DUMMY_SPECS = {"tag_field": 2,
                "delimiter": "\t",
@@ -231,3 +236,17 @@ def test_filter_tagged_event_file_fill_cues():
                 test_cues = test_cues.split("_")
                 assert set(test_cues) == set(cues)
                 assert test_outcome == outcome
+
+
+def test_ngrams_string():
+    word = "banana"
+    trigrams = ["ban", "ana", "nan", "ana"]
+    assert list(ngrams(word, 3, as_string=False)) == trigrams
+
+
+def test_ngrams_list():
+    sentence = ["this", "is", "a", "test"]
+    bigrams = [["this", "is"],
+               ["is", "a"],
+               ["a", "test"]]
+    assert list(ngrams(sentence, 2, as_string=False)) == bigrams

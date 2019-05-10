@@ -263,7 +263,7 @@ def filter_tagged_vocabulary(tagged_vocabulary, vocabulary, split="|"):
     Parameters
     ----------
     tagged_vocabulary : collection
-        vocabulary of tokens merged with tags
+        vocabulary of tokens (can be merged with tags)
     vocabulary : collection
         target vocabulary of tokens without tags
     split : str
@@ -272,7 +272,7 @@ def filter_tagged_vocabulary(tagged_vocabulary, vocabulary, split="|"):
     targets = set()
 
     for tagged_word in tagged_vocabulary:
-        word, tag = tagged_word.split(split)
+        word, *tag = tagged_word.split(split)
         if word in vocabulary:
             targets.add(tagged_word)
 
@@ -329,9 +329,9 @@ def filter_tagged_event_file(input_event_file,
     filtered_event_file : str or path
         Path to resulting event file
     cues : collection
-        Collection of target cues
+        Collection of target cues (without tags)
     outcomes : collection
-        Collection of taret outcomes
+        Collection of taret outcomes (without tags)
     fill_cues : int
         Fill cues with most frequent words to size fill_cues.
         If 0, no words will be added.
@@ -347,23 +347,25 @@ def filter_tagged_event_file(input_event_file,
         msg = f"'{filtered_event_file}' already exists and overwrite=False!"
         raise OSError(msg)
 
-    _, _, vocabulary = cues_outcomes(input_event_file,
-                                     number_of_processes=number_of_processes)
-    cues = filter_tagged_vocabulary(vocabulary, cues)
-    outcomes = filter_tagged_vocabulary(vocabulary, outcomes)
+    counts = cues_outcomes(input_event_file,
+                           number_of_processes=number_of_processes)
+    _, all_cues, all_outcomes = counts
+
+    cues = filter_tagged_vocabulary(all_cues, cues)
+    outcomes = filter_tagged_vocabulary(all_outcomes, outcomes)
 
     if fill_cues:
-        cues = add_most_frequent(cues, vocabulary, fill_cues)
+        cues = add_most_frequent(cues, all_cues, fill_cues)
 
     if fill_outcomes:
-        outcomes = add_most_frequent(outcomes, vocabulary, fill_outcomes)
+        outcomes = add_most_frequent(outcomes, all_outcomes, fill_outcomes)
 
     filter_event_file(input_event_file, filtered_event_file,
                       keep_cues=cues, keep_outcomes=outcomes,
                       number_of_processes=number_of_processes)
 
 
-def ngrams(sequence, n, as_string=True, join_char=" "):
+def ngrams(sequence, n, as_string=True, join_char=" ", warn=True):
     """Extracts all n-grams of length n from sequence.
 
     Parameters
@@ -374,13 +376,31 @@ def ngrams(sequence, n, as_string=True, join_char=" "):
     n : int
         Size of n-grams to extract
     as_string : bool
-        Return n-gram as single strings with spaces between tokens
+        Return each n-gram as single strings with join_char between tokens
+    warn : bool
+        Set to False to turn off warnings (see Notes).
+
+    Yields:
+    -------
+    ngram : slice
+        Each n-gram in order.
+
+    Notes
+    -----
+    If as_string==True, each n-gram is joined into a string.
+    This is typically not intended for string inputs,
+    so a warning is issued.
     """
-    for i in range(len(sequence) - n + 1):
+    if isinstance(sequence, str) and as_string and warn:
+        msg = "Input sequence is string and as_string set to True! " \
+              "This is probably not what you want!"
+        warnings.warn(msg)
+
+    for idx in range(len(sequence) - n + 1):
         if as_string:
-            yield join_char.join(sequence[i:i + n])
+            yield join_char.join(sequence[idx:idx + n])
         else:
-            yield sequence[i:i + n]
+            yield sequence[idx:idx + n]
 
 
 def random_strings(num_strings, symbols=ENGLISH,
