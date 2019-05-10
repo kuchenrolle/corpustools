@@ -105,6 +105,16 @@ def test_split_documents_into_sentences():
         assert len(sentences) == 3
 
 
+def test_split_collection_last_split_missing():
+    numbers = [1, 2, 3, 1, 5, 1, 3]
+    subsequences = split_collection(numbers, 1)
+    subsequences = list(subsequences)
+    assert len(subsequences) == 3
+    assert subsequences[0] == [2, 3]
+    assert subsequences[1] == [5]
+    assert subsequences[2] == [3]
+
+
 def test_merge_tokens_tags_corpus():
     with tempfile.NamedTemporaryFile() as tmp:
         merge_tokens_tags_corpus(DUMMY_CORPUS, tmp.name,

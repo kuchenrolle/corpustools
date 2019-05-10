@@ -191,17 +191,24 @@ def split_collection(collection, split):
     ------
     list
         Each subcollection after splitting
+
+    Notes
+    -----
+    Does not return empty subsequences.
     """
     current = list()
     for element in collection:
 
         if element == split:
-            if collection:
+            if current:
                 yield current
             current = list()
             continue
 
         current.append(element)
+
+    if current:
+        yield current
 
 
 def merge_tokens_tags_corpus(corpus_path, merged_corpus_path,
