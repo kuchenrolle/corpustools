@@ -126,8 +126,8 @@ def extract_units(corpus,
     """
     if "keep_meta" not in kwargs:
         kwargs["keep_meta"] = {boundary}
-    else:
-        kwargs["keep_meta"] = set(kwargs["keep_meta"])
+    elif boundary not in kwargs["keep_meta"]:
+        kwargs["keep_meta"] = set(kwargs["keep_meta"])  # coerce
         kwargs["keep_meta"].add(boundary)
 
     corpus = extract_fields(corpus, **kwargs)
