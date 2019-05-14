@@ -3,6 +3,7 @@ import tempfile
 
 from os.path import dirname, join
 from collections import Counter
+from itertools import chain
 
 from corpustools import add_most_frequent
 from corpustools import ContainsEverything
@@ -250,3 +251,15 @@ def test_ngrams_list():
                ["is", "a"],
                ["a", "test"]]
     assert list(ngrams(sentence, 2, as_string=False)) == bigrams
+
+
+def test_ngrams_multiple_n():
+    sentence = ["this", "is", "a", "test"]
+    bigrams = [["this", "is"],
+               ["is", "a"],
+               ["a", "test"]]
+    trigrams = [["this", "is", "a"],
+                ["is", "a", "test"]]
+    grams = (" ".join(gram) for gram in chain(bigrams, trigrams))
+    grams = chain(sentence, grams)
+    assert set(grams) == set(ngrams(sentence, [1, 2, 3], as_string=True))

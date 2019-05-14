@@ -25,28 +25,42 @@ cdef class TernarySearchTree():
         splitchar : str
             Character that separates tokens in n-gram.
             Counts are stored for complete n-grams and
-            each sub-sequence ending in this character
+            each subsequence ending in this character
         """
         self._splitchar = splitchar
 
-    cpdef void insert(self, str string):
+ 
+    cpdef void insert(self, str string,
+                      unsigned int frequency=1,
+                      bint subsequences=True):
         """Insert string into Tree.
         Parameters
         ----------
         string : str
             String to be inserted.
-        """
-        self.root = self._insert(string, self.root)
-        self.total += 1
+        frequency : unsinged int
+            Frequency of the string that is added (default 1)
+        subsequences : bool
+            If True, counts of subsequences (divided by splitchar)
+            are increased as well
 
-    cpdef int frequency(self, str string):
+        Notes
+        -----
+        Inserting with frequency=0 can be used to initialize
+        the tree (e.g. to ensure balance by controlling insertion order).
+        """
+        self.root = self._insert(string, frequency,
+                                 subsequences, self.root)
+        self.total += frequency
+
+    cpdef unsigned int frequency(self, str string):
         """Return frequency of string.
         Parameters
         ----------
         string : str
         Returns
         -------
-        int
+        unsigned int
             Frequency
         Notes
         -----
@@ -79,12 +93,12 @@ cdef class TernarySearchTree():
         Returns
         -------
         Generator
-            Yield str or (str, int)-tuples (return_frequency=True)
+            Yield str or (str, unsigned int)-tuples (return_frequency=True)
         """
         cdef:
             Node prefix_node
             str completion
-            int frequency
+            unsigned int frequency
 
         prefix_node = self._search(prefix, self.root)
 
@@ -103,7 +117,8 @@ cdef class TernarySearchTree():
             else:
                 yield completion
 
-    cdef Node _insert(self, str string, Node node):
+    cdef Node _insert(self, str string, unsigned int frequency,
+                      bint subsequences, Node node):
         """Insert string at a given node.
         """
         cdef:
@@ -113,7 +128,6 @@ cdef class TernarySearchTree():
         if not string:
             return node
 
-        # character, *rest = string
         character, rest = string[0], string[1:]
 
         if node is None:
@@ -121,18 +135,21 @@ cdef class TernarySearchTree():
 
         if character == node.character:
             if not rest:
-                node.count += 1
+                node.count += frequency
                 return node
 
-            if rest[0] == self.splitchar:
-                node.count += 1
-            node.eq = self._insert(rest, node.eq)
+            if subsequences and (rest[0] == self.splitchar):
+                node.count += frequency
+            node.eq = self._insert(rest, frequency,
+                                   subsequences, node.eq)
 
         elif character < node.character:
-            node.lo = self._insert(string, node.lo)
+            node.lo = self._insert(string, frequency,
+                                   subsequences, node.lo)
 
         else:
-            node.hi = self._insert(string, node.hi)
+            node.hi = self._insert(string, frequency,
+                                   subsequences, node.hi)
 
         return node
 
@@ -164,7 +181,7 @@ cdef class TernarySearchTree():
         """Generator yielding completions starting from node.
         """
         cdef str completion
-        cdef int frequency
+        cdef unsigned int frequency
 
         if node is None:
             return
@@ -203,4 +220,3 @@ cdef class TernarySearchTree():
     @property
     def splitchar(self):
         return self._splitchar
-

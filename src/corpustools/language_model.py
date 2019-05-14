@@ -113,8 +113,58 @@ class LanguageModel():
         # ignore full n-gram if it has already been trained on
         if len(n_gram) == self.n:
             n_gram = list(n_gram)[1:]
+
         for length in range(1, len(n_gram) + 1):
             self._train(list(n_gram)[-length:])
+
+    def insert_dict(self, counts,
+                    is_string=True, subsequences=False):
+        """Increase counts of ngrams by their frequencies.
+
+        Parameters
+        ----------
+        counts : dict[str or tuple of str] -> int
+            Dictionary with ngrams (strings or tuples) mapped
+            to their frequencies
+        is_string : bool
+            If True, ngrams (keys in counts) are assumed to be
+            strings. Otherwise they are assumed to be tuples
+            of strings, which will be joined by self.splitchar.
+        subsequences : bool
+            If True, counts for subsequences of n-gram will
+            also be increased by frequency. A subsequence
+            is everything that ends in self.splitchar,
+            e.g. for "my#shiny#trigram", subsequences are
+            "my#shiny" and "my"
+        """
+        for ngram, frequency in counts.items():
+            self.insert(ngram, frequency, is_string, subsequences)
+
+    def insert(self, ngram, frequency,
+               is_string=True, subsequences=False):
+        """Increases count of n-gram by frequency.
+
+        Parameters
+        ----------
+        ngram : str or sequence of str
+            n-gram as string or sequence of strings (words)
+        frequency : int
+            Frequency of n-gram
+        is_string : bool
+            If True, n-gram must be a string, with
+            self.splitchar (default '#') separating words.
+        subsequences : bool
+            If True, counts for subsequences of n-gram will
+            also be increased by frequency. A subsequence
+            is everything that ends in self.splitchar,
+            e.g. for "my#shiny#trigram", subsequences are
+            "my#shiny" and "my"
+        """
+        if not is_string:
+            ngram = self.splitchar.join(ngram)
+
+        self._counts.insert(ngram, frequency,
+                            subsequences)
 
     def probability(self, sequence, predict_all=False):
         """Returns probability of the sequence.
@@ -299,4 +349,3 @@ def train_lm(corpus, n,
                        must_contain=must_contain)
     lm.train(corpus)
     return lm
-

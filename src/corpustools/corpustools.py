@@ -373,8 +373,8 @@ def ngrams(sequence, n, as_string=True, join_char=" ", warn=True):
     sequence : Sliceable container
         Sequence to extract n-grams from.
         Typically a string or sequence of strings
-    n : int
-        Size of n-grams to extract
+    n : int or sequence of int
+        Size(s) of n-grams to extract
     as_string : bool
         Return each n-gram as single strings with join_char between tokens
     warn : bool
@@ -396,11 +396,15 @@ def ngrams(sequence, n, as_string=True, join_char=" ", warn=True):
               "This is probably not what you want!"
         warnings.warn(msg)
 
-    for idx in range(len(sequence) - n + 1):
-        if as_string:
-            yield join_char.join(sequence[idx:idx + n])
-        else:
-            yield sequence[idx:idx + n]
+    if isinstance(n, int):
+        n = [n]
+
+    for size in n:
+        for idx in range(len(sequence) - size + 1):
+            if as_string:
+                yield join_char.join(sequence[idx:idx + size])
+            else:
+                yield sequence[idx:idx + size]
 
 
 def random_strings(num_strings, symbols=ENGLISH,
