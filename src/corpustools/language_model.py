@@ -117,18 +117,17 @@ class LanguageModel():
         for length in range(1, len(n_gram) + 1):
             self._train(list(n_gram)[-length:])
 
-    def insert_dict(self, counts,
-                    is_string=True, subsequences=False):
-        """Increase counts of ngrams by their frequencies.
+    def insert_sequence(self, counts,
+                        is_string=True, subsequences=False):
+        """Increase counts of sequence of ngrams by their frequencies.
 
         Parameters
         ----------
-        counts : dict[str or tuple of str] -> int
-            Dictionary with ngrams (strings or tuples) mapped
-            to their frequencies
+        counts : sequence of (str, int) tuples
+            Tuples of ngrams and their frequencies
         is_string : bool
-            If True, ngrams (keys in counts) are assumed to be
-            strings. Otherwise they are assumed to be tuples
+            If True, ngrams are assumed to be strings.
+            Otherwise they are assumed to be tuples
             of strings, which will be joined by self.splitchar.
         subsequences : bool
             If True, counts for subsequences of n-gram will
@@ -137,7 +136,7 @@ class LanguageModel():
             e.g. for "my#shiny#trigram", subsequences are
             "my#shiny" and "my"
         """
-        for ngram, frequency in counts.items():
+        for ngram, frequency in counts:
             self.insert(ngram, frequency, is_string, subsequences)
 
     def insert(self, ngram, frequency,

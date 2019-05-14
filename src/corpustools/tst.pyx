@@ -28,7 +28,6 @@ cdef class TernarySearchTree():
             each subsequence ending in this character
         """
         self._splitchar = splitchar
-
  
     cpdef void insert(self, str string,
                       unsigned int frequency=1,
@@ -38,7 +37,7 @@ cdef class TernarySearchTree():
         ----------
         string : str
             String to be inserted.
-        frequency : unsinged int
+        frequency : unsigned int
             Frequency of the string that is added (default 1)
         subsequences : bool
             If True, counts of subsequences (divided by splitchar)
