@@ -193,7 +193,7 @@ class LanguageModel():
 
         else:
             try:
-                n_gram.append(sequence[-self.n])
+                n_gram.extend(sequence[-self.n:])
 
             # if sequence is generator (cannot slice - TypeError),
             # run through it and return probability for final element
