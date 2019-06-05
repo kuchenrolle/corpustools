@@ -1,11 +1,11 @@
 # cython: language_level=3
 cdef class Node():
     cdef:
-        public Py_UNICODE character
+        public str character
         public unsigned int count
         public Node lo, eq, hi
 
-    def __init__(self, Py_UNICODE character):
+    def __init__(self, str character):
         self.character = character
 
 
@@ -15,7 +15,7 @@ cdef class TernarySearchTree():
     """
     cdef:
         Node root
-        Py_UNICODE _splitchar
+        str _splitchar
         unsigned int total
 
     def __init__(self, splitchar=None):
@@ -121,7 +121,7 @@ cdef class TernarySearchTree():
         """Insert string at a given node.
         """
         cdef:
-            Py_UNICODE character
+            str character
             str rest
 
         if not string:
@@ -156,7 +156,7 @@ cdef class TernarySearchTree():
         """Return node that string ends in.
         """
         cdef:
-            Py_UNICODE character
+            str character
             str rest
 
         if not string or not node:

@@ -26,7 +26,7 @@ class CleanCommand(Command):
 
 
 tst = Extension("corpustools.tst",
-                sources = ["src/corpustools/tst.pyx"])
+                sources=["src/corpustools/tst.pyx"])
 
 setup(
     name='corpustools',
@@ -74,7 +74,7 @@ setup(
         'corpus', 'text mining', 'ternary search tree', 'ngrams'
     ],
     install_requires=[
-        'spacy', 'pandas', 'psutil', 'pyndl', "cython"
+        'pandas', 'psutil', 'pyndl', "cython"
     ],
     extras_require={
         # eg:
