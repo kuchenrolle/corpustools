@@ -503,7 +503,8 @@ class ContainsEverything:
         pass
 
 
-def bandsample(population, sample_size=50000, cutoff=5, verbose=False):
+def bandsample(population,
+               sample_size=50_000, cutoff=5, seed=2311, verbose=False):
     """
     Creates a sample of size sample_size out of the population using
     band sampling.
@@ -517,8 +518,7 @@ def bandsample(population, sample_size=50000, cutoff=5, verbose=False):
                   if freq >= cutoff]
 
     # shuffle words with same frequency
-    rand = random.Random(None)
-    rand.shuffle(population)
+    random.Random(seed).shuffle(population)
     population.sort(key=lambda x: x[1])  # lowest -> highest freq
 
     step = sum(freq for word, freq in population) / sample_size
@@ -533,19 +533,19 @@ def bandsample(population, sample_size=50000, cutoff=5, verbose=False):
         if verbose:
             sys.stdout.write(f"{word}\t{freq}\t{accumulator:.3}\n")
 
-        if isclose(accumulator, step):
+        if accumulator >= step or isclose(accumulator, step):
             sample_indices.add(idx)
             accumulator -= step
             if verbose:
                 sys.stdout.write(f"add\t{word}\t{accumulator:.3}\n")
 
-            while isclose(accumulator, step):
-                index = idx - 1
-                if index not in sample_indices:
-                    sample_indices.add(index)
+            while accumulator >= step or isclose(accumulator, step):
+                idx = idx - 1
+                if idx not in sample_indices:
+                    sample_indices.add(idx)
                     accumulator -= step
                     if verbose:
-                        word, freq = population[index]
+                        word, freq = population[idx]
                         sys.stdout.write(f"  add\t{word}\t{accumulator:.3}\n")
 
     sample = Counter(dict(population[i] for i in sample_indices))
