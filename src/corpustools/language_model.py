@@ -243,13 +243,20 @@ class LanguageModel():
 
         Parameters
         ----------
-        n_gram : list/tuple of str
+        n_gram : str or list/tuple of str
 
         Returns
         -------
         int
             Frequency
         """
+        if isinstance(n_gram, str):
+            n_gram = n_gram.split(self.splitchar)
+
+        if self.must_contain:
+            if not any(word in self.must_contain for word in n_gram):
+                return 0
+
         n_gram_string = self.splitchar.join(n_gram)
         frequency = self._counts.frequency(n_gram_string)
         return frequency
@@ -272,7 +279,7 @@ class LanguageModel():
 
         for completion, frequency in self._counts.completions(prefix):
             completion_ = completion.split("#")
-            if not any([word in self.must_contain for word in completion_]):
+            if not any(word in self.must_contain for word in completion_):
                 continue
 
             yield completion, frequency
@@ -300,13 +307,14 @@ class LanguageModel():
             return 0
 
         *preceding, target = n_gram
-        total = self.frequency(preceding)
+        preceding = self.splitchar.join(preceding)
+        total = self._counts.frequency(preceding)
 
         probability = frequency / total
         return probability
 
     def __contains__(self, n_gram):
-        return n_gram in self._counts
+        return self.frequency(n_gram)
 
     def __iter__(self):
         return self.completions()

@@ -30,7 +30,7 @@ tst = Extension("corpustools.tst",
 
 setup(
     name='corpustools',
-    version='0.1.0',
+    version='0.1.1',
     license='MIT',
     description='Collection of tools for working with text data and corpora.',
     long_description=open('README.md').read(),
