@@ -26,7 +26,7 @@ def extract_fields(corpus,
                    lower=True,
                    drop_meta=True,
                    keep_meta={"</s>"},
-                   drop_tags={"zz", "sy"},
+                   drop_tags={"zz", "Zz", "sy", "Sy"},
                    tag_field=2,
                    num_fields=5,
                    return_fields=0
@@ -62,6 +62,13 @@ def extract_fields(corpus,
     -------
     str or list of str
         Field(s) - String if type(num_fields) is int, list of str otherwise.
+        
+    Notes
+    -----
+    Specifying drop_tags and keep_meta is sensitive to "lower". That is,
+    if the tag "Vb" should be dropped, but the result should also be lowered,
+    drop_tag needs to include "vb", as every line will first be lowered and then
+    the tag field will be compared to drop_tag.
     """
     for idx, line_ in enumerate(corpus):
 
